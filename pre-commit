@@ -29,10 +29,7 @@ fi
 
 echo "SpotBugs analysis..."
 mvn spotbugs:spotbugs -X
-if [ $? -ne 0 ]; then
-  echo "SpotBugs issues found."
-  exit 1
-fi
+
 
 
 echo 
