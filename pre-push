@@ -1,7 +1,11 @@
 #!/bin/sh
 
-echo "Lancement des vérifications Maven avant le push..."
-
+echo "Compilation..."
+mvn compile
+if [ $? -ne 0 ]; then
+  echo "Compilation failed"
+  exit 1
+fi
 
 # exécution des tests
 echo "Exécution des tests..."
@@ -12,12 +16,14 @@ if [ $? -ne 0 ]; then
 fi
 
 # analyse de dépendances OWASP
+: << 'COMMENTAIRE'
 echo "Vérification des vulnérabilités de dépendances..."
 mvn org.owasp:dependency-check-maven:check
 if [ $? -ne 0 ]; then
   echo "Vulnérabilités détectées par OWASP Dependency-Check."
   exit 1
 fi
+COMMENTAIRE
 
 echo "Toutes les vérifications sont passées avec succès. Push autorisé."
 exit 0

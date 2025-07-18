@@ -20,12 +20,6 @@ mvn formatter:format
 git add -u
 
 
-echo " Running unit tests."
-mvn test
-if [ $? -ne 0 ]; then
-  echo "Tests failed."
-  exit 1
-fi
 
 echo "SpotBugs analysis..."
 mvn spotbugs:spotbugs -X
