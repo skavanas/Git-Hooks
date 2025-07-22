@@ -1,0 +1,54 @@
+default:
+  only:
+    - branches
+  except:
+    - main
+stages:
+  - build
+  - integration-test
+  - quality
+  - security
+  - deploy
+
+build:
+  stage: build
+  script:
+    - echo "🔨 Compilation du projet"
+    - mvn clean compile
+ 
+integration_test:
+  stage: integration-test
+  script:
+    - echo "🔬 Exécution des tests d'intégration"
+    - mvn verify -DskipUnitTests=true
+ 
+  artifacts:
+    when: always
+    reports:
+      junit: target/failsafe-reports/*.xml
+
+spotbugs:
+  stage: quality
+  script:
+    - echo "🔍 Analyse SpotBugs"
+    - mvn spotbugs:spotbugs
+ 
+  artifacts:
+    paths:
+      - target/spotbugsXml.xml
+
+owasp_dependency_check:
+  stage: security
+  script:
+    - echo "🛡️ Analyse de vulnérabilités OWASP"
+    - mvn org.owasp:dependency-check-maven:check
+
+  allow_failure: true
+
+deploy_prod:
+  stage: deploy
+  script:
+    - echo "🚀 Déploiement en production"
+    - ./scripts/deploy.sh
+  only:
+    - main
